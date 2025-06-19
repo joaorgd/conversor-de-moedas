@@ -4,28 +4,28 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-    public class ConsultaApi {
+public class ConsultaApi {
 
-        public String buscaTaxasDeCambio(String moedaBase) {
-            // Substitua SUA_CHAVE_API pela chave que você obteve
-            String apiKey = "579ebb01d18f225591175b9e";
-            URI endereco = URI.create("https://v6.exchangerate-api.com/v6/579ebb01d18f225591175b9e/latest/USD" + apiKey + "/latest/" + moedaBase);
+    public String buscaTaxasDeCambio(String moedaBase) { // O parâmetro 'moedaBase' será usado
+        String apiKey = "579ebb01d18f225591175b9e";
 
-            try {
-                HttpClient client = HttpClient.newHttpClient();
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(endereco)
-                        .build();
+        // Usamos a variável 'apiKey' e o parâmetro 'moedaBase' para montar a URL CORRETAMENTE
+        URI endereco = URI.create("https://v6.exchangerate-api.com/v6/" + apiKey + "/latest/" + moedaBase);
 
-                HttpResponse<String> response = client
-                        .send(request, HttpResponse.BodyHandlers.ofString());
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(endereco)
+                    .build();
 
-                return response.body();
+            HttpResponse<String> response = client
+                    .send(request, HttpResponse.BodyHandlers.ofString());
 
-            } catch (IOException | InterruptedException e) {
-                System.err.println("Erro ao consultar a API: " + e.getMessage());
-                // Numa aplicação real, seria melhor lançar uma exceção customizada.
-                throw new RuntimeException("Não foi possível obter as taxas de câmbio.", e);
-            }
+            return response.body();
+
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Erro ao consultar a API: " + e.getMessage());
+            throw new RuntimeException("Não foi possível obter as taxas de câmbio.", e);
         }
     }
+}
