@@ -1,18 +1,30 @@
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Properties;
 
 public class ConsultaApi {
 
-    public String buscaTaxasDeCambio(String moedaBase) { // O parâmetro 'moedaBase' será usado
-        String apiKey = "579ebb01d18f225591175b9e";
+    private String getApiKey() throws IOException {
+        Properties props = new Properties();
+        try (FileInputStream fis = new FileInputStream("config.properties")) {
+            props.load(fis);
+            return props.getProperty("API_KEY");
+        }
+    }
 
-        // Usamos a variável 'apiKey' e o parâmetro 'moedaBase' para montar a URL CORRETAMENTE
-        URI endereco = URI.create("https://v6.exchangerate-api.com/v6/" + apiKey + "/latest/" + moedaBase);
-
+    public String buscaTaxasDeCambio(String moedaBase) {
         try {
+            String apiKey = getApiKey();
+            if (apiKey == null || apiKey.trim().isEmpty()) {
+                throw new IOException("Chave de API não encontrada no arquivo config.properties");
+            }
+
+            URI endereco = URI.create("https://v6.exchangerate-api.com/v6/" + apiKey + "/latest/" + moedaBase);
+
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(endereco)
